@@ -60,8 +60,6 @@ class StanceDetectionModel(object):
         return [' '.join([lemmatizer.lemmatize(word) for word in evidence.split()]) for evidence in corpus]  
 
     def _tfidf_features(self,evidence):
-        
-        
         avg_tfidf_feature = 0
         max_tfidf_feature = 0
         evidence_words = nltk.word_tokenize(evidence)
@@ -72,11 +70,21 @@ class StanceDetectionModel(object):
         avg_tfidf_feature = np.sum(tfidf_vector.toarray())/len(evidence_words)
         max_tfidf_feature = np.max(tfidf_vector.toarray())
         return avg_tfidf_feature, max_tfidf_feature
+    
+    def _vadersentiment_analysis(self,evidence):
+        analyser = SentimentIntensityAnalyzer()
+        score = analyser.polarity_scores(evidence)
+        if score['compound'] >= 0 :  
+            stance = +1
+        elif score['compound'] < 0 :  
+            stance = -1 
+        return  stance
+    
     # sentiment analyzer scores 
     def _sentiment_analyzer_scores(self,evidence):
         analyser = SentimentIntensityAnalyzer()
         score = analyser.polarity_scores(evidence)
-        return  score['neg'],score['neu'],score['pos'],score['compound']
+        return  score['neg'],score['neu'],score['pos']
 
     # sentiment analyzer for bag of words of negative/ positive/ nuetral
     def _sentiment_analyzer_noOfWords(self,evidence):
@@ -102,7 +110,7 @@ class StanceDetectionModel(object):
         avg_tfidf_feature, max_tfidf_feature =self._tfidf_features(evidence)
         
             # positive score, nuetral score,  negative score, compound score
-        negative_score,neutral_score,positive_score,compound_score = self._sentiment_analyzer_scores(evidence)
+        negative_score,neutral_score,positive_score = self._sentiment_analyzer_scores(evidence)
         
         # Number of postive/negative/neutral words
         num_of_positive_words, num_of_negative_words , num_of_neutral_words  = self._sentiment_analyzer_noOfWords(evidence)
@@ -110,7 +118,6 @@ class StanceDetectionModel(object):
         return  [negative_score,
                 neutral_score,
                 positive_score,
-                compound_score,
                 num_of_positive_words, 
                 num_of_negative_words, 
                 num_of_neutral_words,
