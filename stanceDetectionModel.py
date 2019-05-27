@@ -2,7 +2,7 @@
 """
 Created on Sun May 26 19:45:05 2019
 
-@author: user
+@author: Harsh Shah
 """
 
 import pandas as pd
@@ -12,12 +12,20 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from sklearn.metrics import confusion_matrix
 
+from nltk.corpus import stopwords
+
 data = pd.read_csv('Dataset\claim_stance_dataset_v1.csv')
+english_stop_words = stopwords.words('english')
 claim_corrected_data = data.iloc[:,7]
 
+
+
+
+
 class StanceDetectionModel(object):
- 
+   
     def load_dataset(self,data):
+        # remove the missing values
         dataset = data[pd.notnull(data['claims.claimSentiment'])]
         train =[]
         test = []
@@ -31,6 +39,25 @@ class StanceDetectionModel(object):
         test = pd.DataFrame(test)   
         return train,test
     
+    def remove_stop_words(self,corpus):
+        removed_stop_words = []
+        for evidence in corpus:
+            removed_stop_words.append(
+                ' '.join([word for word in evidence.split() 
+                          if word not in english_stop_words])
+            )
+        return removed_stop_words
+   
+    def get_stemmed_text(self,corpus):
+        from nltk.stem.porter import PorterStemmer
+        stemmer = PorterStemmer()
+        return [' '.join([stemmer.stem(word) for word in evidence.split()]) for evidence in corpus]
+    
+   
+    def get_lemmatized_text(self,corpus):
+        from nltk.stem import WordNetLemmatizer
+        lemmatizer = WordNetLemmatizer()
+        return [' '.join([lemmatizer.lemmatize(word) for word in evidence.split()]) for evidence in corpus]  
 
     def _tfidf_features(self,evidence):
         
@@ -68,17 +95,10 @@ class StanceDetectionModel(object):
         return num_of_positive_words, num_of_negative_words , num_of_neutral_words
 
 
-    # Number of words
-    def _num_of_words_feature(self,evidence):
-        premise_words = nltk.word_tokenize(evidence)
-        return len(premise_words)
-
-
     def feature_representation(self,evidence):
-            # Number of words
-        num_of_words_feature = self._num_of_words_feature(evidence)
             
-            # Avg. Max. tfidf
+            
+        # Avg. Max. tfidf
         avg_tfidf_feature, max_tfidf_feature =self._tfidf_features(evidence)
         
             # positive score, nuetral score,  negative score, compound score
@@ -87,8 +107,7 @@ class StanceDetectionModel(object):
         # Number of postive/negative/neutral words
         num_of_positive_words, num_of_negative_words , num_of_neutral_words  = self._sentiment_analyzer_noOfWords(evidence)
 
-        return [num_of_words_feature,
-                negative_score,
+        return  [negative_score,
                 neutral_score,
                 positive_score,
                 compound_score,
