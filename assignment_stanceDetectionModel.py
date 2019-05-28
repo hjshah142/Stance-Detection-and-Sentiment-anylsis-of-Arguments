@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Tue May 28 06:11:18 2019
+
+@author: user
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Sun May 26 19:45:05 2019
 
 @author: Harsh Shah
@@ -80,7 +87,7 @@ class StanceDetectionModel(object):
         # To_Do 
 		# Extract Negative,neutral score  and positive score 
 		# using polarity_scores function and return is as features 
-
+        return 0
 
     # sentiment analyzer for bag of words of negative/ positive/ nuetral
     def _sentiment_analyzer_noOfWords(self,evidence):
@@ -89,7 +96,7 @@ class StanceDetectionModel(object):
         num_of_positive_words = 0
         num_of_negative_words = 0
         num_of_neutral_words  = 0
-		# To_Do
+    		# To_Do
 		# Find number of posive words negative words, neutral words  
 		# Usng polarity_scores function of vader
 
