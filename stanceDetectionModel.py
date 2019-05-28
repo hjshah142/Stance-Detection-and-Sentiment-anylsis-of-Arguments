@@ -15,11 +15,9 @@ from sklearn.metrics import confusion_matrix
 from nltk.corpus import stopwords
 
 data = pd.read_csv('Dataset\claim_stance_dataset_v1.csv')
+print(data)
 english_stop_words = stopwords.words('english')
 claim_corrected_data = data.iloc[:,7]
-
-
-
 
 
 class StanceDetectionModel(object):

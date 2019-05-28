@@ -20,7 +20,7 @@ from sklearn import svm
 import textdistance
 data = pd.read_csv('Dataset\claim_stance_dataset_v1.csv')
 claim_corrected_data = data.iloc[:,7]
-claim_target_data =data.iloc[:,16]
+
 class StanceDetectionModelTarget(object):
 
     #tf_idf feature
@@ -92,4 +92,4 @@ class StanceDetectionModelTarget(object):
             
     def _instance_features(self,evidences,targets):
         evidence_features = pd.DataFrame([self.feature_representation(evidence,target) for evidence,target in zip(evidences, targets)])
-        return evidence_features
+        return evidence_features  
