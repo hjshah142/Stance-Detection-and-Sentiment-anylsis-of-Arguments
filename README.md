@@ -2,4 +2,5 @@
 
 
 ## Find the stance of claim towards the topic
-
+- Setemient analysis
+- Stance classification
